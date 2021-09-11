@@ -28,6 +28,11 @@ Ctrl + F10 to access the mod menu. Then simply navigate to the weapon category a
 4. Run [AssemblyPublicizer](https://github.com/CabbageCrow/AssemblyPublicizer) on the WotR Assembly-CSharp.dll inside the WotR folder you set earlier.
 5. Build! If you get assembly reference errors, check the project file and make sure your publicized assembly is in the correct location.
 
+# Links
+
+Source code: https://github.com/cstamford/WOTR_TweakableWeaponCategories
+Nexus: https://www.nexusmods.com/pathfinderwrathoftherighteous/mods/74/
+
 # Credits
 
 Thanks to [ThyWoof's mod template](https://github.com/ThyWoof/PathfinderWoTRModTemplate).

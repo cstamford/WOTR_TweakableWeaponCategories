@@ -7,7 +7,7 @@
 	"Requirements": [],
 	"AssemblyName": "TweakableWeaponCategories.dll",
 	"EntryMethod": "TweakableWeaponCategories.TweakableWeaponCategories.Load",
-	"Repository": "https://raw.githubusercontent.com/cstamford/WOTR_TweakableWeaponCategories/main/WOTR_TweakableWeaponCategories/Repository.json",
-	"HomePage": "https://www.nexusmods.com/pathfinderwrathoftherighteous/mods/##"
+	"Repository": "https://raw.githubusercontent.com/cstamford/WOTR_TweakableWeaponCategories/main/TweakableWeaponCategories/Repository.json",
+	"HomePage": "https://www.nexusmods.com/pathfinderwrathoftherighteous/mods/74/"
 }
 
