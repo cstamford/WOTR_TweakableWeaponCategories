@@ -1,0 +1,13 @@
+{
+	"Id": "TweakableWeaponCategories",
+	"DisplayName": "Tweakable Weapon Categories",
+	"Author": "Xenofell",
+	"Version": "1.0.0",
+	"ManagerVersion": "0.23.3",
+	"Requirements": [],
+	"AssemblyName": "TweakableWeaponCategories.dll",
+	"EntryMethod": "TweakableWeaponCategories.TweakableWeaponCategories.Load",
+	"Repository": "https://raw.githubusercontent.com/cstamford/WOTR_TweakableWeaponCategories/main/WOTR_TweakableWeaponCategories/Repository.json",
+	"HomePage": "https://www.nexusmods.com/pathfinderwrathoftherighteous/mods/##"
+}
+
