@@ -1,8 +1,6 @@
 # Tweakable Weapon Categories
 
-This mod allows you to tweak weapon categories and subcategories. It's purpose is to modify which weapons are considered monk and finessable weapons.
-
-Now you can fulfill your dream of dual wielding finessable monk scimitars, just like your idol Drizzt.
+This mod allows you to tweak weapon categories and subcategories. For example, you could set all scimitars (which is a category) to be monk and finessable (which are subcategories). Now you can fulfill your dream of dual wielding scimitars using dexterity and monk APR, just like your idol Drizzt!
 
 Please note that this mod has only been tested with the monk and finessable weapon options. Other options may not work in some or all situations.
 
