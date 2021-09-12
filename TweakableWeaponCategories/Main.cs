@@ -1,9 +1,11 @@
 using HarmonyLib;
+using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Items.Weapons;
 using Kingmaker.Designers.Mechanics.Buffs;
 using Kingmaker.Enums;
 using Kingmaker.Items;
 using Kingmaker.UnitLogic;
+using Kingmaker.UnitLogic.FactLogic;
 using Kingmaker.Utility;
 using System;
 using System.Collections.Generic;
@@ -165,19 +167,43 @@ namespace TweakableWeaponCategories
             return il.AsEnumerable();
         }
 
-        public static bool HasFeature(this UnitDescriptor _this, string guid)
+        public static bool HasFeature(this UnitDescriptor _this, BlueprintGuid guid)
         {
             return _this.Unit.Facts.Get<Feature>((i) => i.Blueprint.AssetGuid == guid) != null;
         }
+
+        private static readonly BlueprintGuid SimpleWeaponProficiencyGuid = BlueprintGuid.Parse("e70ecf1ed95ca2f40b754f1adb22bbdd");
+        private static readonly BlueprintGuid MartialWeaponProficiencyGuid = BlueprintGuid.Parse("203992ef5b35c864390b4e4a1e200629");
+        private static readonly BlueprintGuid MonkWeaponProficiencyGuid = BlueprintGuid.Parse("c7d6f5244c617734a8a76b6785a752b4");
 
         private static bool CanBeEquipped(UnitProficiency _, WeaponCategory category, UnitDescriptor owner)
         {
             if (TweakableWeaponCategories.Enabled)
             {
-                bool allowed_simple = TweakableWeaponCategories.HasSubCategory(category, WeaponSubCategory.Simple) && owner.HasFeature("e70ecf1ed95ca2f40b754f1adb22bbdd");
-                bool allowed_martial = TweakableWeaponCategories.HasSubCategory(category, WeaponSubCategory.Martial) && owner.HasFeature("203992ef5b35c864390b4e4a1e200629");
-                bool allowed_monk = TweakableWeaponCategories.HasSubCategory(category, WeaponSubCategory.Monk) && owner.HasFeature("c7d6f5244c617734a8a76b6785a752b4");
-                return allowed_simple || allowed_martial || allowed_monk;
+                // Simple, quick category check.
+
+                bool allowed_simple = TweakableWeaponCategories.HasSubCategory(category, WeaponSubCategory.Simple) && owner.HasFeature(SimpleWeaponProficiencyGuid);
+                bool allowed_martial = TweakableWeaponCategories.HasSubCategory(category, WeaponSubCategory.Martial) && owner.HasFeature(MartialWeaponProficiencyGuid);
+                bool allowed_monk = TweakableWeaponCategories.HasSubCategory(category, WeaponSubCategory.Monk) && owner.HasFeature(MonkWeaponProficiencyGuid);
+
+                if (allowed_simple || allowed_martial || allowed_monk) return true;
+
+                // More detailed check over each feature. Note that we skip the features that we explicitly check above.
+                // This is because we're effectively replacing the features above with weapon subcategories.
+
+                foreach (Feature feature in owner.Facts.GetAll<Feature>().Where(i =>
+                    i.Blueprint.AssetGuid != SimpleWeaponProficiencyGuid &&
+                    i.Blueprint.AssetGuid != MartialWeaponProficiencyGuid &&
+                    i.Blueprint.AssetGuid != MonkWeaponProficiencyGuid))
+                {
+                    AddProficiencies component = feature.GetComponent<AddProficiencies>();
+                    if (component != null && component.WeaponProficiencies.Contains(category))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
 
             return owner.Proficiencies.Contains(category);
