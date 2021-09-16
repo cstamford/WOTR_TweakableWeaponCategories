@@ -26,6 +26,7 @@ namespace TweakableWeaponCategories
             public List<WeaponSubCategory> SubCategories;
         }
 
+        public bool EnableProficiencyTypeChanges = false;
         public Category[] WeaponCategories;
 
         public override void Save(UnityModManager.ModEntry modEntry)
@@ -82,7 +83,23 @@ namespace TweakableWeaponCategories
 
         private static void OnGUI(UnityModManager.ModEntry modEntry)
         {
-            Array subcategories = Enum.GetValues(typeof(WeaponSubCategory));
+            GUILayout.BeginHorizontal();
+            Settings.EnableProficiencyTypeChanges = GUILayout.Toggle(Settings.EnableProficiencyTypeChanges, " EXPERIMENTAL: Enable proficiency type changes (e.g. simple -> exotic).");
+            GUILayout.EndHorizontal();
+            GUILayout.Space(8);
+
+            List<WeaponSubCategory> allowed_subcategories = new List<WeaponSubCategory>()
+            {
+                WeaponSubCategory.Monk,
+                WeaponSubCategory.Finessable,
+            };
+
+            if (Settings.EnableProficiencyTypeChanges)
+            {
+                allowed_subcategories.Add(WeaponSubCategory.Simple);
+                allowed_subcategories.Add(WeaponSubCategory.Martial);
+                allowed_subcategories.Add(WeaponSubCategory.Exotic);
+            }
 
             foreach (Settings.Category category in Settings.WeaponCategories)
             {
@@ -94,11 +111,9 @@ namespace TweakableWeaponCategories
 
                 if (category.Visible)
                 {
-                    for (int subcategory_idx = 0; subcategory_idx < subcategories.Length; ++subcategory_idx)
+                    foreach (WeaponSubCategory subcategory in allowed_subcategories)
                     {
                         GUILayout.BeginHorizontal();
-
-                        WeaponSubCategory subcategory = (WeaponSubCategory)subcategory_idx;
                         bool last_value = HasSubCategory(category.Type, subcategory);
                         bool value = GUILayout.Toggle(last_value, $" {subcategory}", GUILayout.ExpandWidth(false));
 
@@ -176,9 +191,19 @@ namespace TweakableWeaponCategories
         private static readonly BlueprintGuid MartialWeaponProficiencyGuid = BlueprintGuid.Parse("203992ef5b35c864390b4e4a1e200629");
         private static readonly BlueprintGuid MonkWeaponProficiencyGuid = BlueprintGuid.Parse("c7d6f5244c617734a8a76b6785a752b4");
 
+        private static readonly WeaponCategory[] DefaultProficiencies = new WeaponCategory[]
+        {
+            WeaponCategory.UnarmedStrike,
+            WeaponCategory.Bite,
+            WeaponCategory.Claw,
+            WeaponCategory.Gore,
+            WeaponCategory.Touch,
+            WeaponCategory.Ray
+        };
+
         private static bool CanBeEquipped(UnitProficiency _, WeaponCategory category, UnitDescriptor owner)
         {
-            if (TweakableWeaponCategories.Enabled)
+            if (TweakableWeaponCategories.Enabled && TweakableWeaponCategories.Settings.EnableProficiencyTypeChanges)
             {
                 // Simple, quick category check.
 
@@ -186,7 +211,7 @@ namespace TweakableWeaponCategories
                 bool allowed_martial = TweakableWeaponCategories.HasSubCategory(category, WeaponSubCategory.Martial) && owner.HasFeature(MartialWeaponProficiencyGuid);
                 bool allowed_monk = TweakableWeaponCategories.HasSubCategory(category, WeaponSubCategory.Monk) && owner.HasFeature(MonkWeaponProficiencyGuid);
 
-                if (allowed_simple || allowed_martial || allowed_monk) return true;
+                if (allowed_simple || allowed_martial || allowed_monk || DefaultProficiencies.Contains(category)) return true;
 
                 // More detailed check over each feature. Note that we skip the features that we explicitly check above.
                 // This is because we're effectively replacing the features above with weapon subcategories.
